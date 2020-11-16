@@ -1,6 +1,8 @@
 package cn.lx.qiniu.controller;
 
 import cn.lx.qiniu.util.QiniuUtils;
+import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +35,21 @@ public class FileController {
 
     @Value("${qiniu.externaLink}")
     private String externaLink;
+
+    @PostMapping("/upToken")
+    public String getUpToken() {
+        Auth auth = Auth.create(accessKey, secretKey);
+        StringMap putPolicy = new StringMap();
+        putPolicy.put("callbackUrl", "http://33833g4w32.wicp.vip:49739/callback/upload");
+        putPolicy.put("callbackBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize)}");
+        putPolicy.put("callbackBodyType", "application/json");
+        long expireSeconds = 3600;
+        String upToken = auth.uploadToken(bucketName, null, expireSeconds, putPolicy);
+        log.info("upToken:{}",upToken);
+
+        return upToken;
+    }
+
 
     @PostMapping("/upload")
     public String upload(@RequestParam("file") MultipartFile file) {

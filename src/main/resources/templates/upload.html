@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>upload</title>
+</head>
+<body>
+<form id="upload" method="post" action="http://upload-z2.qiniup.com"
+      enctype="multipart/form-data">
+    <!--文件名-->
+    <input name="key" type="hidden" id="key">
+
+    <!--签名-->
+    <input name="token" type="hidden" id="token">
+
+    <input name="file" id="file" type="file" />
+</form>
+<button onclick="upload()">上传文件</button>
+
+</body>
+<!--jquery放在resources下static中-->
+<script src="/jquery/jquery-1.12.4.min.js"></script>
+<script>
+
+//上传
+function upload() {
+    //获取上传文件的文件名
+    var originalFileName=$("#file").val();
+    console.log("originalFileName:"+originalFileName)
+    //获取文件的后缀名
+    var suffix=originalFileName.substring(originalFileName.lastIndexOf("."),originalFileName.length)
+    var date=new Date()
+    //文件名为日期
+    var prefix=date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()
+        +"-"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds()+"-"+date.getMilliseconds()
+
+    //将文件名设置到表单中，一起提交上去
+    $("#key").val(prefix+suffix)
+    console.log("key:"+prefix+suffix)
+    //这个异步请求是用来获取上传凭证的
+    $.ajax({
+        url: "/file/upToken",
+        type: "post",
+        success:function (resp) {
+            if (resp!=null){
+                console.log("resp:"+resp)
+                $("#token").val(resp)
+                //表单提交
+                $("#upload").submit()
+            }else {
+                alert("获取token失败")
+            }
+        }
+    })
+}
+</script>
+</html>

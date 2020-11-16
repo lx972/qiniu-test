@@ -33,7 +33,6 @@ public class QiniuUtils {
      * @param externaLink
      * @param file
      * @return
-     * @throws IOException
      */
     public static String upload(String accessKey, String secretKey, String bucket, String externaLink, MultipartFile file){
         //构造一个带指定 Region 对象的配置类
