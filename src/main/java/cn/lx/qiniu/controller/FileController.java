@@ -5,10 +5,7 @@ import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -35,6 +32,22 @@ public class FileController {
 
     @Value("${qiniu.externaLink}")
     private String externaLink;
+
+    @GetMapping("/list")
+    public void list() {
+        QiniuUtils.list(accessKey, secretKey, bucketName);
+    }
+
+    @DeleteMapping("/delete/{filename}")
+    public void delete(@PathVariable("filename") String filename) {
+        QiniuUtils.delete(accessKey, secretKey, bucketName,filename);
+    }
+
+    @GetMapping("/info/{filename}")
+    public void info(@PathVariable("filename") String filename) {
+        QiniuUtils.getFileInfo(accessKey, secretKey, bucketName,filename);
+    }
+
 
     @PostMapping("/upToken")
     public String getUpToken() {
